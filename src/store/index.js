@@ -3,6 +3,7 @@
 import { configureStore } from '@reduxjs/toolkit'
 import authReducer from './authslice'
 import courseReducer from './courseSlice'
+import progressReducer from './progressSlice'
 
 
 // We'll add courseReducer and progressReducer in later phases.
@@ -18,5 +19,10 @@ export const store = configureStore({
     // state.courses.courses        → the full courses array
     // state.courses.enrolledCourseIds → the enrolled IDs array
     courses: courseReducer,
+
+    // Registering progressReducer under the "progress" namespace.
+    // Any component can now read progress state with:
+    // state.progress.completedLessons
+    progress: progressReducer,
   },
 })
