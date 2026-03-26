@@ -1,8 +1,48 @@
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
+import { useProgress } from '../hooks/useProgress'
 import Navbar from '../components/Navbar'
+// A separate component for each enrolled course card.
+// We pull it out because it needs to call useProgress —
+// and hooks must be called at the component level, not inside a map().
+// Calling useProgress inside a .map() would violate the Rules of Hooks.
+function CourseProgressCard({ course }) {
+  const { percentage, completedLessons } = useProgress(
+    course.id,
+    course.lessons.length
+  )
 
+  return (
+    <Link to={`/courses/${course.id}`} style={styles.card}>
+      <span style={styles.cardIcon}>{course.thumbnail}</span>
+
+      <div style={{ flex: 1 }}>
+        <p style={styles.cardTitle}>{course.title}</p>
+        <p style={styles.cardMeta}>
+          {course.lessons.length} lessons · {course.duration}
+        </p>
+
+        {/* PROGRESS BAR */}
+        <div style={styles.progressTrack}>
+          <div
+            style={{
+              ...styles.progressFill,
+              width: `${percentage}%`,
+            }}
+          />
+        </div>
+
+        {/* Progress label */}
+        <p style={styles.progressLabel}>
+          {completedLessons.length}/{course.lessons.length} completed · {percentage}%
+        </p>
+      </div>
+
+      <span style={styles.badge}>{course.category}</span>
+    </Link>
+  )
+}
 export default function DashboardPage() {
   const { user } = useAuth()
 
@@ -42,24 +82,9 @@ export default function DashboardPage() {
           <div style={styles.section}>
             <h2 style={styles.sectionTitle}>Your Courses</h2>
             <div style={styles.grid}>
-              {enrolledCourses.map((course) => (
-                // Each enrolled course links to its detail page
-                <Link
-                  key={course.id}
-                  to={`/courses/${course.id}`}
-                  style={styles.card}
-                >
-                  <span style={styles.cardIcon}>{course.thumbnail}</span>
-                  <div>
-                    <p style={styles.cardTitle}>{course.title}</p>
-                    <p style={styles.cardMeta}>
-                      {course.lessons.length} lessons · {course.duration}
-                    </p>
-                  </div>
-                  {/* Category badge */}
-                  <span style={styles.badge}>{course.category}</span>
-                </Link>
-              ))}
+                {enrolledCourses.map((course) => (
+    <CourseProgressCard key={course.id} course={course} />
+    ))}
             </div>
           </div>
         )}
@@ -204,4 +229,24 @@ const styles = {
     textShadow: '0 0 20px rgba(0,255,255,0.3)',
   },
   statLabel: { color: '#4a6080', fontSize: '0.8rem', margin: 0 },
+  progressTrack: {
+    height: '4px',
+    background: 'rgba(255,255,255,0.05)',
+    borderRadius: '999px',
+    overflow: 'hidden',
+    marginTop: '0.5rem',
+    border: '1px solid rgba(0,255,255,0.06)',
+  },
+  progressFill: {
+    height: '100%',
+    background: 'linear-gradient(90deg, #00ffff, #0080ff)',
+    borderRadius: '999px',
+    transition: 'width 0.4s ease',
+    boxShadow: '0 0 6px rgba(0,255,255,0.4)',
+  },
+  progressLabel: {
+    color: '#2a3a50',
+    fontSize: '0.72rem',
+    margin: '0.3rem 0 0',
+  },
 }

@@ -1,6 +1,7 @@
-import { useParams, Link, useNavigate, Outlet, useMatch } from 'react-router-dom'
-import { useSelector, useDispatch } from 'react-redux'
 import { enrollCourse, unenrollCourse } from '../store/courseSlice'
+import { useSelector, useDispatch } from 'react-redux'
+import { useParams, Link, useNavigate, Outlet, useMatch } from 'react-router-dom'
+import { useProgress } from '../hooks/useProgress'
 import Navbar from '../components/Navbar'
 
 export default function CourseDetailPage() {
@@ -21,6 +22,14 @@ export default function CourseDetailPage() {
 
   // Check if this specific course is enrolled
   const isEnrolled = enrolledCourseIds.includes(id)
+
+  // useProgress gives us the completion percentage for this course.
+    // We pass course?.lessons.length safely — if course is undefined
+    // (handled by the guard below) it defaults to 0.
+    const { percentage, completedLessons } = useProgress(
+    id,
+    course?.lessons.length || 0
+    )
 
   // Guard: if no course matches the URL (e.g. /courses/999), show a fallback
   if (!course) {
@@ -78,17 +87,44 @@ export default function CourseDetailPage() {
 
             {/* ENROLL / UNENROLL BUTTON */}
             {isEnrolled ? (
-              <div style={styles.enrolledRow}>
-                {/* If enrolled, show a green confirmation + unenroll option */}
+            <div>
+                <div style={styles.enrolledRow}>
                 <span style={styles.enrolledBadge}>✓ Enrolled</span>
                 <button onClick={handleUnenroll} style={styles.unenrollBtn}>
-                  Unenroll
+                    Unenroll
                 </button>
-              </div>
+                </div>
+
+                {/* PROGRESS BAR — only visible when enrolled */}
+                <div style={styles.progressWrapper}>
+                <div style={styles.progressHeader}>
+                    <span style={styles.progressLabel}>Your progress</span>
+                    {/* Show completed count and percentage */}
+                    <span style={styles.progressPercent}>
+                    {completedLessons.length}/{course.lessons.length} lessons · {percentage}%
+                    </span>
+                </div>
+
+                {/* The track is the full-width dark background bar.
+                    The fill sits inside it and its width is set dynamically
+                    using the percentage value from useProgress. */}
+                <div style={styles.progressTrack}>
+                    <div
+                    style={{
+                        ...styles.progressFill,
+                        // This is what makes the bar actually reflect progress.
+                        // percentage is a 0-100 number so we append '%' to make
+                        // it a valid CSS width value e.g. '67%'
+                        width: `${percentage}%`,
+                    }}
+                    />
+                </div>
+                </div>
+            </div>
             ) : (
-              <button onClick={handleEnroll} style={styles.enrollBtn}>
+            <button onClick={handleEnroll} style={styles.enrollBtn}>
                 Enroll in this Course
-              </button>
+            </button>
             )}
           </div>
 
@@ -342,4 +378,38 @@ const styles = {
     padding: '0.3rem 0.8rem',
   },
   lockIcon: { fontSize: '0.9rem' },
+  progressWrapper: {
+    marginTop: '1.25rem',
+  },
+  progressHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '0.5rem',
+  },
+  progressLabel: {
+    color: '#4a6080',
+    fontSize: '0.8rem',
+  },
+  progressPercent: {
+    color: '#00ffff',
+    fontSize: '0.8rem',
+    fontWeight: '600',
+  },
+  progressTrack: {
+    height: '6px',
+    background: 'rgba(255,255,255,0.05)',
+    borderRadius: '999px',
+    overflow: 'hidden',
+    border: '1px solid rgba(0,255,255,0.08)',
+  },
+  progressFill: {
+    height: '100%',
+    background: 'linear-gradient(90deg, #00ffff, #0080ff)',
+    borderRadius: '999px',
+    // The transition makes the bar animate smoothly
+    // as lessons are marked complete — it grows in 0.4s
+    transition: 'width 0.4s ease',
+    boxShadow: '0 0 8px rgba(0,255,255,0.4)',
+  },
 }
