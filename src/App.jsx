@@ -36,7 +36,11 @@ export default function App() {
           <ProtectedRoute><CourseDetailPage /></ProtectedRoute>
         } />
 
-        {/* Nested lesson routes come in Phase 4 — they'll go here */}
+       {/* This Route is nested INSIDE the parent Route above.
+              path="lessons/:lessonId" is RELATIVE — React Router
+              automatically prepends the parent path.
+              So the full URL becomes /courses/:id/lessons/:lessonId */}
+          <Route path="lessons/:lessonId" element={<LessonPlayerPage />} />
 
         {/* Catch-all */}
         <Route path="*" element={<Navigate to="/login" replace />} />
