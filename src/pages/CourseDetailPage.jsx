@@ -1,4 +1,4 @@
-import { useParams, Link, useNavigate } from 'react-router-dom'
+import { useParams, Link, useNavigate, Outlet, useMatch } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { enrollCourse, unenrollCourse } from '../store/courseSlice'
 import Navbar from '../components/Navbar'
@@ -138,6 +138,11 @@ export default function CourseDetailPage() {
             ))}
           </div>
         </div>
+         {/* OUTLET — this is where LessonPlayerPage renders
+            when the URL is /courses/:id/lessons/:lessonId.
+            When no lesson is selected, Outlet renders nothing
+            and the page looks exactly as it did before. */}
+        <Outlet />
 
       </div>
     </div>
