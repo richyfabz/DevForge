@@ -42,17 +42,25 @@ export default function LessonPlayerPage() {
       {/* PLAYER AREA */}
       <div style={styles.player}>
 
-        {/* VIDEO PLACEHOLDER
-            In a real app this would be a <video> tag or an iframe
-            pointing to YouTube/Vimeo. For the demo it's a styled box. */}
+       {/* REAL YOUTUBE EMBED */}
         <div style={styles.videoBox}>
-          <div style={styles.videoInner}>
+        {lesson.videoId ? (
+            // iframe embeds the YouTube video directly.
+            // youtube.com/embed/{videoId} is the standard embed URL format.
+            // allowFullScreen lets the user go fullscreen inside the player.
+            <iframe
+            style={styles.iframe}
+            src={`https://www.youtube.com/embed/${lesson.videoId}`}
+            title={lesson.title}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            />
+        ) : (
+            <div style={styles.videoInner}>
             <span style={styles.playIcon}>▶</span>
             <p style={styles.videoTitle}>{lesson.title}</p>
-            <p style={styles.videoDuration}>{lesson.duration}</p>
-          </div>
-          {/* Scanline overlay — purely decorative, adds to the techy feel */}
-          <div style={styles.scanlines} />
+            </div>
+        )}
         </div>
 
         {/* LESSON INFO */}
