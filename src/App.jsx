@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 // Auth
 import LoginPage       from './pages/LoginPage'
 import ProtectedRoute  from './components/protectedRoute'
+import LessonPlayerPage from './pages/LessonPlayerPage'
 
 // Pages — replacing the inline placeholders from before
 import DashboardPage     from './pages/DashboardPage'
@@ -34,13 +35,12 @@ export default function App() {
             /courses/3 → CourseDetailPage with id = '3' */}
         <Route path="/courses/:id" element={
           <ProtectedRoute><CourseDetailPage /></ProtectedRoute>
-        } />
-
-       {/* This Route is nested INSIDE the parent Route above.
-              path="lessons/:lessonId" is RELATIVE — React Router
-              automatically prepends the parent path.
-              So the full URL becomes /courses/:id/lessons/:lessonId */}
-          <Route path="lessons/:lessonId" element={<LessonPlayerPage />} />
+        }>
+          {/* Wrap the child route in ProtectedRoute too */}
+          <Route path="lessons/:lessonId" element={
+            <ProtectedRoute><LessonPlayerPage /></ProtectedRoute>
+          } />
+        </Route>
 
         {/* Catch-all */}
         <Route path="*" element={<Navigate to="/login" replace />} />

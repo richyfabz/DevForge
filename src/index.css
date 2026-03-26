@@ -12,3 +12,49 @@ html, body, #root {
 body {
   background: #050b14;
 }
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  background: #050b14;
+}
+
+/* ── HOVER ANIMATIONS ── */
+
+/* Course cards and lesson items — subtle zoom + glow on hover */
+a[style], div[style*="cursor: pointer"] {
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+a[style]:hover {
+  transform: scale(1.02);
+  border-color: rgba(0, 255, 255, 0.35) !important;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.08) !important;
+}
+
+div[style*="cursor: pointer"]:hover {
+  background: rgba(0, 255, 255, 0.07) !important;
+  transform: scale(1.01);
+}
+
+/* Buttons */
+button {
+  transition: transform 0.3s ease, opacity 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+button:hover {
+  transform: scale(1.04);
+  opacity: 0.9;
+}
+
+button:active {
+  transform: scale(0.97);
+}
