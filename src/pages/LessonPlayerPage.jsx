@@ -1,5 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
+import { useProgress } from '../hooks/useProgress'
 
 export default function LessonPlayerPage() {
   // Both dynamic segments are available from useParams.
@@ -20,6 +21,17 @@ export default function LessonPlayerPage() {
   // Derive previous and next lessons for navigation buttons
   const prevLesson = course?.lessons[lessonIndex - 1]
   const nextLesson = course?.lessons[lessonIndex + 1]
+
+// useProgress gives us everything we need for tracking.
+// We pass the courseId and total lesson count so it can
+// calculate the percentage for this specific course.
+const { isLessonComplete, toggleLesson } = useProgress(
+  id,
+  course?.lessons.length || 0
+)
+
+// Derive whether the current lesson is complete
+const currentLessonComplete = isLessonComplete(lessonId)
 
   if (!lesson) {
     return (
@@ -75,7 +87,23 @@ export default function LessonPlayerPage() {
               Lesson {lessonIndex + 1} of {course.lessons.length}
             </span>
           </div>
+            {/* MARK COMPLETE BUTTON */}
+        <div style={styles.completeRow}>
+        <button
+            onClick={() => toggleLesson(lessonId)}
+            style={{
+            ...styles.completeBtn,
+            // Spread the completed style on top when lesson is done
+            ...(currentLessonComplete ? styles.completeBtnDone : {}),
+            }}
+        >
+            {/* Button text and icon change based on completion state */}
+            {currentLessonComplete ? '✓ Completed' : 'Mark as Complete'}
+        </button>
+        </div>
 
+        {/* NAVIGATION BUTTONS */}
+        <div style={styles.navRow}></div>
           {/* NAVIGATION BUTTONS */}
           <div style={styles.navRow}>
             {/* Only render Prev button if a previous lesson exists */}
@@ -126,11 +154,14 @@ export default function LessonPlayerPage() {
               }}
             >
               <span style={{
-                ...styles.sidebarNumber,
-                ...(isActive ? styles.sidebarNumberActive : {}),
-              }}>
-                {index + 1}
-              </span>
+            ...styles.sidebarNumber,
+            ...(isActive ? styles.sidebarNumberActive : {}),
+            // Green tint if this lesson is completed
+            ...(isLessonComplete(l.id) ? styles.sidebarNumberComplete : {}),
+            }}>
+            {/* Show checkmark if complete, number if not */}
+            {isLessonComplete(l.id) ? '✓' : index + 1}
+            </span>
               <div>
                 <p style={{
                   ...styles.sidebarLessonTitle,
@@ -326,5 +357,39 @@ const styles = {
     color: '#2a3a50',
     fontSize: '0.72rem',
     margin: 0,
+  },
+  sidebarDuration: {
+    color: '#2a3a50',
+    fontSize: '0.72rem',
+    margin: 0,
+  },
+
+  // ADD THESE:
+  completeRow: {
+    marginBottom: '1.25rem',
+  },
+  completeBtn: {
+    width: '100%',
+    padding: '0.75rem',
+    borderRadius: '8px',
+    border: '1px solid rgba(0,255,255,0.2)',
+    background: 'transparent',
+    color: '#00ffff',
+    fontSize: '0.9rem',
+    fontWeight: '600',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+    letterSpacing: '0.02em',
+  },
+  completeBtnDone: {
+    background: 'rgba(0,255,100,0.08)',
+    border: '1px solid rgba(0,255,100,0.3)',
+    color: '#00ff88',
+    boxShadow: '0 0 15px rgba(0,255,100,0.1)',
+  },
+  sidebarNumberComplete: {
+    background: 'rgba(0,255,100,0.1)',
+    borderColor: '#00ff88',
+    color: '#00ff88',
   },
 }
