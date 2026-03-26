@@ -2,6 +2,8 @@
 // The "store" is the central safe that holds ALL your app's global state.
 import { configureStore } from '@reduxjs/toolkit'
 import authReducer from './authslice'
+import courseReducer from './courseSlice'
+
 
 // We'll add courseReducer and progressReducer in later phases.
 // For now, only auth is registered.

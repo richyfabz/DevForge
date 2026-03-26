@@ -1,6 +1,8 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
+import './index.css'
+
 
 // Provider is the component that makes the Redux store
 // available to EVERY component in your app.
