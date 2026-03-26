@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 
 // Auth
 import LoginPage       from './pages/LoginPage'
-import ProtectedRoute  from './components/protectedRoute'
+import ProtectedRoute  from './components/ProtectedRoute'
 import LessonPlayerPage from './pages/LessonPlayerPage'
 
 // Pages — replacing the inline placeholders from before
