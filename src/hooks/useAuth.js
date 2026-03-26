@@ -3,7 +3,7 @@
 import { useSelector, useDispatch } from 'react-redux'
 
 // We import the action creators from authSlice
-import { login, logout } from '../store/authslice'
+import { login, logout } from '../store/authSlice'
 
 // This is our custom hook. It starts with "use" — that's the React convention.
 // It's not magic, it's just a function that packages Redux logic cleanly.
